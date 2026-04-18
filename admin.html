@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumina Beauté | Dashboard Admin</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        .admin-container {
+            padding: 8rem 5% 5rem 5%;
+            min-height: 100vh;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 2rem;
+            background: rgba(255,255,255,0.02);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 1.2rem;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        th {
+            background: rgba(255,255,255,0.05);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        tr:hover {
+            background: rgba(255,255,255,0.05);
+        }
+        .btn-delete {
+            background: rgba(255, 50, 50, 0.2);
+            color: #ff6b6b;
+            border: 1px solid #ff6b6b;
+            padding: 0.4rem 0.8rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-delete:hover {
+            background: #ff6b6b;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Lumina<span>.</span> Admin</div>
+        <ul class="nav-links">
+            <li><a href="index.html">Retour au site</a></li>
+        </ul>
+    </nav>
+
+    <div class="admin-container">
+        <div class="section-header">
+            <h2>Liste des Réservations</h2>
+            <p>Gérez vos rendez-vous clients</p>
+        </div>
+
+        <table id="reservations-table">
+            <thead>
+                <tr>
+                    <th>Date & Heure</th>
+                    <th>Prestation</th>
+                    <th>Client(e)</th>
+                    <th>Téléphone</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="reservations-list">
+                <!-- Data will be loaded via JS -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadReservations();
+        });
+
+        function loadReservations() {
+            const list = document.getElementById('reservations-list');
+            const reservations = JSON.parse(localStorage.getItem('salon_reservations') || '[]');
+
+            if (reservations.length === 0) {
+                list.innerHTML = '<tr><td colspan="5" style="text-align:center;">Aucune réservation pour le moment.</td></tr>';
+                return;
+            }
+
+            // Trier par date et heure
+            reservations.sort((a, b) => {
+                const dateA = new Date(a.date + 'T' + a.time);
+                const dateB = new Date(b.date + 'T' + b.time);
+                return dateA - dateB;
+            });
+
+            list.innerHTML = '';
+            reservations.forEach(res => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${res.date}</strong> à ${res.time}</td>
+                    <td>${res.prestation ? res.prestation.toUpperCase() : 'Non spécifié'}</td>
+                    <td>${res.prenom} <strong>${res.nom}</strong></td>
+                    <td><a href="tel:${res.telephone}" style="color:var(--text-light); text-decoration:none;">${res.telephone}</a></td>
+                    <td><button class="btn-delete" onclick="deleteReservation(${res.id})">Supprimer</button></td>
+                `;
+                list.appendChild(tr);
+            });
+        }
+
+        function deleteReservation(id) {
+            if (confirm("Voulez-vous vraiment annuler ce rendez-vous ?")) {
+                let reservations = JSON.parse(localStorage.getItem('salon_reservations') || '[]');
+                reservations = reservations.filter(res => res.id !== id);
+                localStorage.setItem('salon_reservations', JSON.stringify(reservations));
+                loadReservations();
+            }
+        }
+    </script>
+</body>
+</html>
