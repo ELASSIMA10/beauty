@@ -366,3 +366,8 @@ h1, h2, h3, .logo {
 .time-slot:hover:not(.booked) { background: rgba(255,255,255,0.1); }
 .time-slot.selected { background: var(--primary-color); color: var(--dark-bg); border-color: var(--primary-color); }
 .time-slot.booked { opacity: 0.4; cursor: not-allowed; background: transparent; text-decoration: line-through; }
+
+/* Logo Styles */
+.logo-img { height: 55px; width: auto; filter: drop-shadow(0 2px 8px rgba(201,168,76,0.3)); }
+.hero-logo { height: 100px; width: auto; margin-bottom: 1rem; filter: drop-shadow(0 4px 15px rgba(201,168,76,0.4)); display: block; }
+.hero-tag { color: var(--primary-color); letter-spacing: 2px; font-size: 0.85rem; margin-bottom: 1rem; text-transform: uppercase; }
