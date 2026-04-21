@@ -125,12 +125,17 @@
                     <label>Date</label>
                     <input type="date" id="booking-date" required>
                 </div>
-                <div class="form-group time-slots-container" style="display:none;">
-                    <label>Heure d'arrivée / Créneau (10h – 18h)</label>
-                    <div id="time-slots" class="time-slots">
+                <div style="display: flex; gap: 1rem;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Heure d'arrivée</label>
+                        <input type="time" id="arrival-time" required>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Heure de départ</label>
+                        <input type="time" id="departure-time" required>
                     </div>
                 </div>
-                <input type="hidden" id="selected-time" required>
+                <input type="hidden" id="selected-time">
                 <div class="form-group" style="display: flex; gap: 1rem;">
                     <div style="flex: 1;">
                         <label>Prénom</label>

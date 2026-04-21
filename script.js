@@ -39,65 +39,38 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Logic for time slots
+    // Logic for time and date defaults
     const dateInput = document.getElementById('booking-date');
-    const timeSlotsContainer = document.querySelector('.time-slots-container');
-    const timeSlotsGrid = document.getElementById('time-slots');
-    const selectedTimeInput = document.getElementById('selected-time');
-
-    dateInput.addEventListener('change', (e) => {
-        const date = e.target.value;
-        if (date) {
-            generateTimeSlots();
-            timeSlotsContainer.style.display = 'block';
-        } else {
-            timeSlotsContainer.style.display = 'none';
-        }
-    });
-
-    function generateTimeSlots() {
-        timeSlotsGrid.innerHTML = '';
-        selectedTimeInput.value = '';
-        const startTime = 10 * 60; // 10:00
-        const endTime = 18 * 60; // 18:00
-        
-        for (let time = startTime; time <= endTime; time += 30) {
-            const hours = Math.floor(time / 60);
-            const minutes = time % 60;
-            const timeStr = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-            
-            const slot = document.createElement('div');
-            slot.className = 'time-slot';
-            slot.textContent = timeStr;
-            
-            // Randomly block some slots for the demonstration
-            if (Math.random() < 0.25) {
-                slot.classList.add('booked');
-                slot.title = "Déjà réservé";
-            } else {
-                slot.addEventListener('click', () => {
-                    document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
-                    slot.classList.add('selected');
-                    selectedTimeInput.value = timeStr;
-                });
-            }
-            timeSlotsGrid.appendChild(slot);
-        }
+    const arrivalTimeInput = document.getElementById('arrival-time');
+    
+    function setDefaults() {
+        const now = new Date();
+        dateInput.value = now.toISOString().split('T')[0];
+        arrivalTimeInput.value = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
     }
+
+    setDefaults(); // Set when page loads
+
+    // Reset defaults when opening modal
+    bookBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            setDefaults();
+        });
+    });
 
     // Form submission
     const form = document.getElementById('booking-form');
     form.addEventListener('submit', (e) => {
         e.preventDefault();
         
-        if (!selectedTimeInput.value) {
             alert('Veuillez sélectionner un créneau horaire avant de valider.');
             return;
         }
 
         const prestation = document.querySelector('select').value;
         const date = dateInput.value;
-        const time = selectedTimeInput.value;
+        const arrivalTime = document.getElementById('arrival-time').value;
+        const departureTime = document.getElementById('departure-time').value;
         const prenom = document.getElementById('prenom').value;
         const nom = document.getElementById('nom').value;
         const telephone = document.getElementById('telephone').value;
@@ -107,7 +80,8 @@ document.addEventListener('DOMContentLoaded', () => {
             id: Date.now(),
             prestation,
             date,
-            time,
+            arrivalTime,
+            departureTime,
             nom: nom.toUpperCase(),
             prenom,
             telephone
@@ -117,10 +91,10 @@ document.addEventListener('DOMContentLoaded', () => {
         reservations.push(reservation);
         localStorage.setItem('salon_reservations', JSON.stringify(reservations));
 
-        alert(`Parfait ${prenom} ! Votre réservation est confirmée pour le ${date} à ${time}.`);
+        alert(`Parfait ${prenom} ! Votre réservation est confirmée pour le ${date} (Arrivée: ${arrivalTime}).`);
         
         modal.style.display = 'none';
         form.reset();
-        timeSlotsContainer.style.display = 'none';
+        setDefaults();
     });
 });
